@@ -7,7 +7,32 @@ MainWindowCallback(HWND Window,
 		   WPARAM WParam,
 		   LPARAM LParam)
 {
-  
+  LRESULT Result = 0;
+  switch(Message)
+  {
+    case WM_SIZE:
+    {
+      OutputDebugStringA("WM_SIZE\n");
+    } break;
+    case WM_DESTROY:
+    {
+      OutputDebugStringA("WM_DESTROY\n");
+    } break;
+    case WM_CLOSE:
+    {
+      OutputDebugStringA("WM_CLOSE\n");
+    } break;
+    case WM_ACTIVATEAPP:
+    {
+      OutputDebugStringA("WM_ACTIVATEAPP\n");
+    } break;
+    default:
+    {
+      OutputDebugStringA("default\n");
+      Result = 0;
+    } break;
+  }
+  return(Result);
 }
 
 
