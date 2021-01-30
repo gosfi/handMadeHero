@@ -1,18 +1,28 @@
 #include<windows.h>
 
 
+LRESULT CALLBACK
+MainWindowCallback(HWND Window,
+		   UINT Message,
+		   WPARAM WParam,
+		   LPARAM LParam)
+{
+  
+}
+
+
 int WINAPI WinMain
-( HINSTANCE hInstance,
-  HINSTANCE hPrevInstance,
-  LPSTR lpCmdLine,
-  int nShowCms)
+( HINSTANCE Instance,
+  HINSTANCE PrevInstance,
+  LPSTR CommanddLine,
+  int ShowCode)
 {
   WNDCLASS windowClass ={};
 
-  //TODO(sam)check if style is still relevant
+  //TODO(sam)check if style CS_HREDRAW & CS_VREDRAW is still relevant
   windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
-  windowClass.lpfnWndProc = ;
-  windowClass.hInstance = hInstance;
+  windowClass.lpfnWndProc = MainWindowCallback;
+  windowClass.hInstance = Instance;
   // HICON     hIcon;
   // LPCSTR    lpszMenuName;
   windowClass.lpszClassName = "handMadeHeroWindowClass";
