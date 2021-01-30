@@ -26,10 +26,29 @@ MainWindowCallback(HWND Window,
     {
       OutputDebugStringA("WM_ACTIVATEAPP\n");
     } break;
+    case WM_PAINT:
+    {
+      PAINTSTRUCT Paint;
+      HDC DeviceContext = BeginPaint(Window, &Paint);
+      int X = Paint.rcPaint.left;
+      int Y = Paint.rcPaint.top;
+      int Height = Paint.rcPaint.bottom -  Paint.rcPaint.top;
+      int Width = Paint.rcPaint.right -  Paint.rcPaint.left;
+      static DWORD Operation = WHITENESS; 
+      PatBlt(DeviceContext, X, Y, Width, Height, Operation);
+      if(Operation == WHITENESS)
+      {
+	Operation = BLACKNESS;
+      }
+      else
+      {
+	Operation = WHITENESS;
+      }
+      EndPaint(Window, &Paint);
+    } break;
     default:
     {
-      OutputDebugStringA("default\n");
-      Result = 0;
+      Result = DefWindowProc(Window, Message, WParam, LParam);
     } break;
   }
   return(Result);
@@ -51,8 +70,49 @@ int WINAPI WinMain
   // HICON     hIcon;
   // LPCSTR    lpszMenuName;
   windowClass.lpszClassName = "handMadeHeroWindowClass";
-  
-  MessageBox(0,"this is a window"," handmade hero",
-	     MB_OK|MB_ICONINFORMATION);
+
+  if(RegisterClass(&windowClass))
+  {
+    HWND WindowHandle =
+      CreateWindowEx(
+		     0,
+		     windowClass.lpszClassName,
+		     "Handmade Hero",
+		     WS_OVERLAPPEDWINDOW|WS_VISIBLE,
+		     CW_USEDEFAULT,
+		     CW_USEDEFAULT,
+		     CW_USEDEFAULT,
+		     CW_USEDEFAULT,
+		     0,
+		     0,
+		     Instance,
+		     0);
+    if(WindowHandle != NULL)
+    {
+      MSG Message;
+      for(;;)
+      {
+        BOOL MessageResult =  GetMessage(&Message, NULL, 0, 0);
+        if(MessageResult > 0)
+	{
+	  TranslateMessage(&Message);
+	  DispatchMessage(&Message);
+        }
+	else
+	{
+	  break;
+	}
+      }
+    }
+    else
+    {
+      //TODO(SAM): logging if failing
+    }
+					
+  }
+  else
+  {
+    //TODO(SAM): logging if failing
+  }
   return(0);
 }
