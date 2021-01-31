@@ -1,6 +1,8 @@
 #include<windows.h>
 
 
+static bool Running;
+
 LRESULT CALLBACK
 MainWindowCallback(HWND Window,
 		   UINT Message,
@@ -16,10 +18,12 @@ MainWindowCallback(HWND Window,
     } break;
     case WM_DESTROY:
     {
+      Running = false;
       OutputDebugStringA("WM_DESTROY\n");
     } break;
     case WM_CLOSE:
     {
+      Running = false;
       OutputDebugStringA("WM_CLOSE\n");
     } break;
     case WM_ACTIVATEAPP:
@@ -74,7 +78,7 @@ int WINAPI WinMain
   if(RegisterClass(&windowClass))
   {
     HWND WindowHandle =
-      CreateWindowEx(
+      CreateWindowExA(
 		     0,
 		     windowClass.lpszClassName,
 		     "Handmade Hero",
@@ -87,27 +91,27 @@ int WINAPI WinMain
 		     0,
 		     Instance,
 		     0);
-    if(WindowHandle != NULL)
+ if(WindowHandle != NULL)
+ {
+    MSG Message;
+    while(Running)
     {
-      MSG Message;
-      for(;;)
+      BOOL MessageResult =  GetMessage(&Message, NULL, 0, 0);
+      if(MessageResult > 0)
       {
-        BOOL MessageResult =  GetMessage(&Message, NULL, 0, 0);
-        if(MessageResult > 0)
-	{
-	  TranslateMessage(&Message);
-	  DispatchMessage(&Message);
-        }
-	else
-	{
-	  break;
-	}
+        TranslateMessage(&Message);
+        DispatchMessage(&Message);
+      }
+      else
+      {
+        break;
       }
     }
-    else
-    {
-      //TODO(SAM): logging if failing
-    }
+  }
+  else
+  {
+    //TODO(SAM): logging if failing
+  }
 					
   }
   else
